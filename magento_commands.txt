@@ -1,0 +1,73 @@
+php -dmemory_limit=5G bin/magento setup:static-content:deploy
+
+php -dmemory_limit=5G bin/magento magento setup:install
+
+php -dmemory_limit=5G bin/magento setup:install --base-url=http://localhost/magento2.4.0/ \
+--db-host=localhost --db-name=magento2.4.0 --db-user=root --db-password= \
+--admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com \
+--admin-user=admin --admin-password=admin@123 --language=en_US \
+--currency=USD --timezone=America/Chicago --use-rewrites=1 \
+--search-engine=elasticsearch7 --elasticsearch-host=es-host.example.com \
+--elasticsearch-port=9200
+
+php -dmemory_limit=5G bin/magento setup:upgrade -f
+php -dmemory_limit=5G bin/magento setup:static-content:deploy -f
+php -dmemory_limit=5G bin/magento setup:static-content:deploy -f it_IT
+
+php bin/magento setup:static-content:deploy adminhtml -f
+php bin/magento setup:static-content:deploy en_GB --area adminhtml -f
+
+php -d memory_limit=-1 bin/magento setup:static-content:deploy en_US -a frontend -t Codazon/unlimited_supermarket
+
+php -dmemory_limit=5G bin/magento cache:flush
+php -dmemory_limit=5G bin/magento cache:clean
+php bin/magento deploy:mode:set developer
+ 
+php -dmemory_limit=5G bin/magento indexer:reindex
+php -dmemory_limit=5G bin/magento indexer:reindex design_config_grid
+php -dmemory_limit=5G bin/magento indexer:reindex customer_grid                            
+php -dmemory_limit=5G bin/magento indexer:reindex catalog_category_product                 
+php -dmemory_limit=5G bin/magento indexer:reindex catalog_product_category                 
+php -dmemory_limit=5G bin/magento indexer:reindex catalog_product_price                    
+php -dmemory_limit=5G bin/magento indexer:reindex catalog_product_attribute                
+php -dmemory_limit=5G bin/magento indexer:reindex catalogsearch_fulltext                                   
+php -dmemory_limit=5G bin/magento indexer:reindex cataloginventory_stock                                   
+php -dmemory_limit=5G bin/magento indexer:reindex catalogrule_rule                                         
+php -dmemory_limit=5G bin/magento indexer:reindex catalogrule_product   
+
+php -dmemory_limit=5G bin/magento module:disable Mageplaza_SmsNotification
+
+php bin/magento module:disable Mageplaza_Faqs
+
+php bin/magento deploy:mode:show
+
+php bin/magento deploy:mode:set production --skip-compilation
+
+php bin/magento catalog:images:resize
+
+php -dmemory_limit=5G bin/magento module:enable Emizentech_Bestsellerwidget
+php -dmemory_limit=5G bin/magento module:enable Magento_ReCaptchaWebapiRest
+
+------------------------------------------------------------------------
+
+after install extension:
+
+php -dmemory_limit=5G bin/magento setup:upgrade
+
+php -dmemory_limit=5G bin/magento module:status
+
+php bin/magento --version
+
+----------------------------------------------------------------------------------------
+php bin/magento maintenance:enable
+php bin/magento maintenance:disable
+create admin urser:
+
+php -dmemory_limit=5G bin/magento admin:user:create --admin-user='admin_developer' --admin-password='admin@123' --admin-email='' --admin-firstname='Php' --admin-lastname='User'
+
+
+-------------------------------------------------------------------------------------------------
+
+magento 2 update admin pass:
+UPDATE admin_user SET password = CONCAT(SHA2('xxxxxxxYourNewPassword', 256), ':xxxxxxx:1') WHERE username = 'admin';
+
